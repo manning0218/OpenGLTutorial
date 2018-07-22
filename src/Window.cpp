@@ -1,9 +1,10 @@
 #include "Window.hpp"
 
 float Window::angle_ {0.0f};
-float Window::red_ {1.0f};
-float Window::blue_ {1.0f};
-float Window::green_ {1.0f};
+std::array<float, 2> Window::position_ {0.0f, 1.0f};
+std::array<float, 2> Window::direction_ {0.0f, 5.0f};
+std::shared_ptr<Snowman> Window::snowman_ {std::make_shared<Snowman>()};
+
 
 bool Window::createWindow(const std::string& title) {
     bool returnFlag {false};
@@ -113,23 +114,34 @@ void Window::render() {
 
     // Reset the transformations and set the camera
     glLoadIdentity();
-    gluLookAt(  0.0f, 0.0f, 10.0f,
-                0.0f, 0.0f, 0.0f,
-                0.0f, 1.0f, 0.0f);
+    gluLookAt(  position_[0],                      1.0f,   position_[1],
+                position_[0] + direction_[0],      1.0f,   position_[1] + direction_[1],
+                0.0f,   1.0f,   0.0f);  
+               
+              
 
     // Sets the rotation
     glRotatef(angle_, 0.0f, 1.0f, 0.0f);
 
-    // Sets color of the rectangle
-    glColor3f(red_, green_, blue_);
+    // Sets color of the ground
+    glColor3f(0.9f, 0.9f, 0.9f);
 
-    glBegin(GL_TRIANGLES);
-        glVertex3f(-2.0, -2.0, 0.0);
-        glVertex3f(2, 0.0, 0.0);
-        glVertex3f(0.0, 2.0, 0.0);
+    glBegin(GL_QUADS);
+        glVertex3f(-100.0f, 0.0f, -100.0f);
+        glVertex3f(-100.0f, 0.0f, 100.0f);
+        glVertex3f(100.0f, 0.0f, 100.0f);
+        glVertex3f(100.0f, 0.0f, -100.0f);
     glEnd();
 
-    angle_ += 0.1f;
+    // Draw 36 Snowmen
+    for(int i = -3; i < 3; i++) {
+        for(int j = -3; j < 3; j++) {
+            glPushMatrix();
+            glTranslatef(i * 10.0, 0, j * 10.0);
+            snowman_->drawSnowman();
+            glPopMatrix();
+        }
+    }
 
     glutSwapBuffers();
 }
@@ -158,8 +170,30 @@ void Window::changeSize(int width, int height) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void Window::setColor(float red, float green, float blue) {
-    red_ = red;
-    blue_ = blue;
-    green_ = green;
+void Window::increaseAngle() {
+    angle_ += 0.01f;
+}
+
+void Window::decreaseAngle() {
+    angle_ -= 0.01f;
+}
+
+void Window::moveLeft() {
+    direction_[0] = std::sin(angle_);
+    direction_[1] = -std::cos(angle_);
+}
+
+void Window::moveRight() {
+    direction_[0] = std::sin(angle_);
+    direction_[1] = -std::cos(angle_);
+}
+
+void Window::moveDown() {
+    position_[0] -= direction_[0] * 0.1f;
+    position_[1] -= direction_[1] * 0.1f;
+}
+
+void Window::moveUp() {
+    position_[0] += direction_[0] * 0.1f;
+    position_[1] += direction_[1] * 0.1f;
 }

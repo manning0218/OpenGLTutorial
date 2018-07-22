@@ -4,6 +4,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <array>
+#include <cmath>
 
 #include <stdlib.h>
 
@@ -12,6 +14,7 @@
 
 #include "DataSpecs.hpp"
 #include "Keys.hpp"
+#include "Snowman.hpp"
 
 struct SizeLocation {
     SizeLocation() = default;
@@ -72,7 +75,17 @@ class Window {
         static void render();
         static void changeSize(int width, int height);
 
-        static void setColor(float red, float green, float blue);
+        // Increases angle of camera
+        static void increaseAngle();
+
+        // Decreeases angle of camera
+        static void decreaseAngle();
+
+        // Updates the direction and position of the camera
+        static void moveLeft();
+        static void moveRight();
+        static void moveUp();
+        static void moveDown();
 
     private:
         SizeLocation* sizeAndLocation_ {nullptr};
@@ -80,7 +93,10 @@ class Window {
         display::Color colorMode_ {display::NO_COLOR_MODE};
 
         static float angle_;
-        static float red_, green_, blue_;
+        static std::array<float, 2> direction_;
+        static std::array<float, 2> position_;
+
+        static std::shared_ptr<Snowman> snowman_;
 
         std::shared_ptr<Keys> key_;
 };

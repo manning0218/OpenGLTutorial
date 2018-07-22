@@ -53,13 +53,18 @@ void Keys::processSpecialKeys(int key, int x, int y) {
     if(findKey(static_cast<keyboard::SpecialKey>(key))) {
         switch(key) {
             case GLUT_KEY_UP:
-                Window::setColor(1.0, 0.0, 0.0); 
+                Window::moveUp();
                 break;
             case GLUT_KEY_LEFT:
-                Window::setColor(0.0, 1.0, 0.0);
+                Window::decreaseAngle();
+                Window::moveLeft();
                 break;
             case GLUT_KEY_RIGHT:
-                Window::setColor(0.0, 0.0, 1.0);
+                Window::increaseAngle();
+                Window::moveRight();
+                break;
+            case GLUT_KEY_DOWN:
+                Window::moveDown();
                 break;
             default: 
                 std::cout << __FILE__ << ":" << __LINE__ 
